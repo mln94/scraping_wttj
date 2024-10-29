@@ -1,9 +1,11 @@
 import requests
 import json
+import csv
 from bs4 import BeautifulSoup
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import re
 # Load environment variables from .env file
 load_dotenv()
 
@@ -94,9 +96,14 @@ def openai_data_processing(all_post_description):
         model="gpt-4o",
         messages=[
             {
-                "role": "user", "content": f"extrait de ces données: {all_post_description} les missions attendues, récupère les missions sans interprétation, récupère uniquement cette partie du contenu qui correspond aux missions attendues par l'entreprise. Une fois que tu as récupéré les missions je te demande de les organiser sous forme de liste, indique moi pour chaque entreprise le nom de l'entreprise"
-                }
+                "role": "user", 
+                "content": f"extrait de ces données: {all_post_description} les missions attendues, récupère les missions sans interprétation, récupère uniquement cette partie du contenu qui correspond aux missions attendues par l'entreprise. indique les missions attendues immédiatement sans introduction, juste les missions attendues et rajoute aussi le nom de l'entreprise en entier pas en abrégé. j'aimerais que tu mettes ça dans un tableau array la premiere valeur serait le nom et la seconde valeur les missions mettre juste le nom et la description dan un array rien d'autres aucune autre valeurs. dans la partie mission des entreprises organise ça stp sous forme de liste ou array une mission une ligne"
+            }
         ]
     )
-    print(completion)
+    data = completion.choices[0].message.content
+# Écriture d'une ligne dans le fichier de notes
+    with open('missions_marketing.txt', 'a', encoding='utf-8') as f:
+        f.write(data + '\n')  # Ajoute `new_data` avec un saut de ligne à la fin
+
 main()
