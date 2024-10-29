@@ -89,5 +89,14 @@ def get_all_post_description(url):
     #     print(item.text)
 
 def openai_data_processing(all_post_description):
-    print('test')
+    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user", "content": f"extrait de ces données: {all_post_description} les missions attendues, récupère les missions sans interprétation, récupère uniquement cette partie du contenu qui correspond aux missions attendues par l'entreprise. Une fois que tu as récupéré les missions je te demande de les organiser sous forme de liste, indique moi pour chaque entreprise le nom de l'entreprise"
+                }
+        ]
+    )
+    print(completion)
 main()
